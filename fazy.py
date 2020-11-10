@@ -5,7 +5,7 @@ import util
 import numpy as np
 import pandas as pd
 
-# %%
+# %% class set fungsi anggota
 class FungSet:
   def __init__ (self, label, fungsi, bilangan:tuple):
     prev = bilangan[0]
@@ -16,6 +16,9 @@ class FungSet:
     self.label = label
     self.fungsi = fungsi
     self.bilangan = bilangan
+
+  def hitung(self, x, up=1):
+    return self.fungsi(x, *self.bilangan, up=up)
 
 # %% fungsi keanggotaan
 class Fang:
@@ -50,7 +53,7 @@ class Fang:
       return Fang.linier_atas(x, a, b, up)
     return Fang.linier_bawah(x, c, d, up)
 
-# %%
+# %% class utamanya
 class Fazy:
   def __init__(self, arr_fset:tuple, lookup_inferensi:pd.core.frame.DataFrame):
     # definisi notasi:
@@ -76,8 +79,7 @@ class Fazy:
         for i, col in enumerate(self.cols))
 
   def _fazify(self, nilai:np.ndarray, fset_tup:tuple):
-    return np.array([fs.fungsi(nilai, *fs.bilangan) \
-                      for fs in fset_tup])
+    return np.array([fs.hitung(nilai) for fs in fset_tup])
 
   def _inferensi(self, fazys):
     masked = tuple(
@@ -90,14 +92,11 @@ class Fazy:
   def _defazify(self, inferensi, step, maks, mins):
     sumbu_x = np.arange(mins, maks, step=step)
 
-    derajat = np.array([
-      [fs.fungsi(x, *fs.bilangan, up=inferensi[i]) for x in sumbu_x] \
+    derajat = np.max([
+      [fs.hitung(x, up=inferensi[i]) for x in sumbu_x] \
       for i, fs in enumerate(self.arr_fset[-1])
-      ])
-
-    return np.sum([np.dot(sumbu_x, derajat[i]) \
-                    for i in range(derajat.shape[0])], axis=0) \
-            / np.sum(np.sum(derajat, axis=1), axis=0)
+      ], axis=0)
+    return np.dot(sumbu_x, derajat) / np.sum(derajat, axis=0)
 
   def klasify(self, dataset: pd.core.frame.DataFrame, step=10, maks=100, mins=0):
 
