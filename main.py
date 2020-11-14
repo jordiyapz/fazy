@@ -83,13 +83,13 @@ lookup_inferensi
 
 # %% main
 model = Fazy((
-  set_fungsi_penghasilan,
-  set_fungsi_pengeluaran,
-  set_fungsi_kelayakan
+    set_fungsi_penghasilan,
+    set_fungsi_pengeluaran,
+    set_fungsi_kelayakan
   ),
   lookup_inferensi=lookup_inferensi)
 
-kelayakan = model.klasify(dataset=data_mhs, step=1) # (2, m)
+kelayakan = model.klasify(dataset=data_mhs, step=5) # (2, m)
 
 # %% visualisasi tabel
 data_mhs['Kelayakan'] = kelayakan
