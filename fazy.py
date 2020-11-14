@@ -87,11 +87,11 @@ class Fazy:
     )
     konjungsi = np.minimum(*masked)  # shape = (n, m)
     # matriks disjungsi
-    return np.dot(self.one_hot[-1].T, konjungsi) # shape = (nfs_out, m)
+    disjungsi = np.dot(self.one_hot[-1].T, konjungsi) # shape = (nfs_out, m)
+    return disjungsi
 
   def _defazify(self, inferensi, step, maks, mins):
     sumbu_x = np.arange(mins, maks, step=step)
-
     derajat = np.max([
       [fs.hitung(x, up=inferensi[i]) for x in sumbu_x] \
       for i, fs in enumerate(self.arr_fset[-1])
@@ -99,7 +99,6 @@ class Fazy:
     return np.dot(sumbu_x, derajat) / np.sum(derajat, axis=0)
 
   def klasify(self, dataset: pd.core.frame.DataFrame, step=10, maks=100, mins=0):
-
     fazys = tuple(  # fazys_i.shape = (nfs_i, m)
         self._fazify(dataset[self.cols[i]].to_numpy(), fset_tup) \
         for i, fset_tup in enumerate(self.arr_fset[:len(self.arr_fset)-1]))
