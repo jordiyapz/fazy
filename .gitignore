@@ -1,5 +1,6 @@
 env
 .pycache
+.vscode
 __pycache__
 download
 data
